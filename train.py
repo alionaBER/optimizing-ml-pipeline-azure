@@ -55,6 +55,11 @@ def main():
     model = LogisticRegression(C=args.C, max_iter=args.max_iter).fit(x_train, y_train)
 
     accuracy = model.score(x_test, y_test)
+    
+    os.makedirs('outputs', exist_ok=True)
+    # files saved in the "outputs" folder are automatically uploaded into run history
+    joblib.dump(model, 'outputs/model.joblib')
+    
     run.log("Accuracy", np.float(accuracy))
 
 # Create TabularDataset using TabularDatasetFactory
@@ -68,7 +73,6 @@ x, y = clean_data(ds)
 
 # Split data into train and test sets.
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42)
-
 
 run = Run.get_context()
 
