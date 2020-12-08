@@ -10,20 +10,6 @@ import pandas as pd
 from azureml.core.run import Run
 from azureml.data.dataset_factory import TabularDatasetFactory
 
-# Create TabularDataset using TabularDatasetFactory
-# Data is located at:
-# "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
-
-web_path = "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
-ds = TabularDatasetFactory.from_delimited_files(path=web_path)
-
-x, y = clean_data(ds)
-
-# Split data into train and test sets.
-x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42)
-
-
-run = Run.get_context()
 
 def clean_data(data):
     # Dict for cleaning data
@@ -51,6 +37,8 @@ def clean_data(data):
 
     y_df = x_df.pop("y").apply(lambda s: 1 if s == "yes" else 0)
     
+    return x_df, y_df
+    
 
 def main():
     # Add arguments to script
@@ -68,6 +56,21 @@ def main():
 
     accuracy = model.score(x_test, y_test)
     run.log("Accuracy", np.float(accuracy))
+
+# Create TabularDataset using TabularDatasetFactory
+# Data is located at:
+# "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
+
+web_path = "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
+ds = TabularDatasetFactory.from_delimited_files(path=web_path)
+
+x, y = clean_data(ds)
+
+# Split data into train and test sets.
+x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42)
+
+
+run = Run.get_context()
 
 if __name__ == '__main__':
     main()
