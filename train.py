@@ -34,10 +34,11 @@ def clean_data(data):
     x_df["month"] = x_df.month.map(months)
     x_df["day_of_week"] = x_df.day_of_week.map(weekdays)
     x_df["poutcome"] = x_df.poutcome.apply(lambda s: 1 if s == "success" else 0)
+    xy_df = x_df.copy()
 
     y_df = x_df.pop("y").apply(lambda s: 1 if s == "yes" else 0)
     
-    return x_df, y_df
+    return x_df, y_df, xy_df
     
 
 def main():
@@ -69,7 +70,7 @@ def main():
 web_path = "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
 ds = TabularDatasetFactory.from_delimited_files(path=web_path)
 
-x, y = clean_data(ds)
+x, y, _ = clean_data(ds)
 
 # Split data into train and test sets.
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42)
